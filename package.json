@@ -1,0 +1,15 @@
+{
+  "name": "ecommerce-api",
+  "version": "1.0.0",
+  "description": "## Overview This project is an e-commerce application REST API built using Express, Node.js, and PostgreSQL. It allows users to perform various CRUD operations related to products, user accounts, shopping carts, and orders.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
