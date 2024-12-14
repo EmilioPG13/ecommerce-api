@@ -8,22 +8,24 @@ const User = sequelize.define('User', {
         autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         unique: true,
         allowNull: false,
     },
     password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
     },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
+}, {
+    timestamps: false, // Disable automatic timestamps
 });
 
 module.exports = User;
