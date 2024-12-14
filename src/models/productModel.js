@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db'); // Sequelize instance
+const sequelize = require('../config/db'); // Your Sequelize instance
 
 const Product = sequelize.define('Product', {
     id: {
@@ -8,7 +8,7 @@ const Product = sequelize.define('Product', {
         autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
     },
     description: {
@@ -16,18 +16,14 @@ const Product = sequelize.define('Product', {
         allowNull: false,
     },
     price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
     },
-    stock: {
+    stock_quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
     created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
-    updated_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
