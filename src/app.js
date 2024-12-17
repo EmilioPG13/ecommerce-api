@@ -1,8 +1,13 @@
 const express = require('express');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../swagger/swagger.json');
 
 // Middleware
 app.use(express.json());
+
+// Swagger setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Import and use routes
 const productRoutes = require('./routes/productRoutes');
