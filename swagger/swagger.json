@@ -22,32 +22,18 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    }
+                                    "name": { "type": "string" },
+                                    "email": { "type": "string" },
+                                    "password": { "type": "string" }
                                 },
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password"
-                                ]
+                                "required": ["name", "email", "password"]
                             }
                         }
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "User created successfully"
-                    },
-                    "500": {
-                        "description": "Server error"
-                    }
+                    "201": { "description": "User created successfully" },
+                    "500": { "description": "Server error" }
                 }
             }
         },
@@ -61,31 +47,190 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    }
+                                    "email": { "type": "string" },
+                                    "password": { "type": "string" }
                                 },
-                                "required": [
-                                    "email",
-                                    "password"
-                                ]
+                                "required": ["email", "password"]
                             }
                         }
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "User logged in successfully"
-                    },
-                    "401": {
-                        "description": "Invalid credentials"
-                    },
-                    "500": {
-                        "description": "Server error"
+                    "200": { "description": "User logged in successfully" },
+                    "401": { "description": "Invalid credentials" },
+                    "500": { "description": "Server error" }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "summary": "Get all products",
+                "responses": {
+                    "200": { "description": "A list of products" },
+                    "500": { "description": "Server error" }
+                }
+            },
+            "post": {
+                "summary": "Create a new product",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "description": { "type": "string" },
+                                    "price": { "type": "number" },
+                                    "stock_quantity": { "type": "integer" }
+                                },
+                                "required": ["name", "description", "price", "stock_quantity"]
+                            }
+                        }
                     }
+                },
+                "responses": {
+                    "201": { "description": "Product created successfully" },
+                    "500": { "description": "Server error" }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "summary": "Get a product by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Product details" },
+                    "404": { "description": "Product not found" },
+                    "500": { "description": "Server error" }
+                }
+            },
+            "put": {
+                "summary": "Update a product by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": { "type": "string" },
+                                    "description": { "type": "string" },
+                                    "price": { "type": "number" },
+                                    "stock_quantity": { "type": "integer" }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "Product updated successfully" },
+                    "404": { "description": "Product not found" },
+                    "500": { "description": "Server error" }
+                }
+            },
+            "delete": {
+                "summary": "Delete a product by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Product deleted successfully" },
+                    "404": { "description": "Product not found" },
+                    "500": { "description": "Server error" }
+                }
+            }
+        },
+        "/cart-items/{id}": {
+            "put": {
+                "summary": "Update a cart item by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "cart_id": { "type": "integer" },
+                                    "product_id": { "type": "integer" },
+                                    "quantity": { "type": "integer" }
+                                },
+                                "required": ["cart_id", "product_id", "quantity"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": { "description": "Cart item updated successfully" },
+                    "404": { "description": "Cart item not found" },
+                    "500": { "description": "Server error" }
+                }
+            },
+            "delete": {
+                "summary": "Delete a cart item by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": { "type": "integer" }
+                    }
+                ],
+                "responses": {
+                    "200": { "description": "Cart item deleted successfully" },
+                    "404": { "description": "Cart item not found" },
+                    "500": { "description": "Server error" }
+                }
+            }
+        },
+        "/checkout": {
+            "post": {
+                "summary": "Checkout",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "userId": { "type": "integer" }
+                                },
+                                "required": ["userId"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": { "description": "Checkout successful" },
+                    "500": { "description": "Server error" }
                 }
             }
         }
