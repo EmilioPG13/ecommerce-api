@@ -1,0 +1,1 @@
+// This component will handle routes that require authentication
