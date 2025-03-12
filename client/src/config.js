@@ -9,7 +9,7 @@ const config = {
     pageSize: 12,
 
     // Default image if product image is not available
-    defaultProductImage: '',
+    defaultProductImage: 'https://via.placeholder.com/300x200?text=No+Image+Available',
 };
 
 export default config;
