@@ -2,30 +2,30 @@
   "name": "ecommerce-api",
   "version": "1.0.0",
   "description": "## Overview This project is an e-commerce application REST API built using Express, Node.js, and PostgreSQL. It allows users to perform various CRUD operations related to products, user accounts, shopping carts, and orders.",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
+    "start": "node src/server.js",
+    "server": "nodemon src/server.js",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@stripe/react-stripe-js": "^3.3.0",
-    "@stripe/stripe-js": "^5.9.2",
-    "axios": "^1.8.1",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "formik": "^2.4.6",
     "jsonwebtoken": "^9.0.2",
-    "jwt-decode": "^4.0.0",
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
-    "react-router-dom": "^7.2.0",
     "sequelize": "^6.37.5",
-    "styled-components": "^6.1.15",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "yup": "^1.6.1"
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.3"
   }
 }
