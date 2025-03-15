@@ -13,7 +13,7 @@ import OrderHistory from './pages/OrderHistory.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import { jwtDecode } from 'jwt-decode';
-import './App.css';
+// Removed App.css import
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,9 +56,9 @@ function App() {
 
     return (
         <Router>
-            <div className="app">
+            <div className="flex flex-col min-h-screen">
                 <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-                <main className="main-content">
+                <main className="flex-grow">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/products" element={<Products />} />
