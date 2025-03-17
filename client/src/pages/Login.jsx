@@ -119,6 +119,27 @@ const Login = ({ onLogin }) => {
         }
     };
 
+    const handleAppleLogin = async () => {
+        setIsSubmitting(true);
+        setSubmitError(null);
+        setSubmitSuccess(null);
+        
+        try {
+            // This would connect to your backend's Apple OAuth endpoint
+            setTimeout(() => {
+                setSubmitError("Apple login is currently under maintenance. Please use email login.");
+                setIsSubmitting(false);
+            }, 1000);
+            
+            // In a real implementation:
+            // const response = await loginWithApple();
+            // onLogin(response.data.token);
+        } catch (error) {
+            setSubmitError('Failed to login with Apple. Please try again.');
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="bg-gray-50 py-12 px-4">
             <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
@@ -217,27 +238,40 @@ const Login = ({ onLogin }) => {
                             </div>
                         </div>
 
-                        <div className="mt-6 grid grid-cols-2 gap-3">
+                        <div className="mt-6 grid grid-cols-3 gap-3">
                             <button
                                 onClick={handleGoogleLogin}
                                 disabled={isSubmitting}
                                 className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                             >
-                                <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032 s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2 C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"></path>
                                 </svg>
-                                Google
                             </button>
                             <button
                                 onClick={handleFacebookLogin}
                                 disabled={isSubmitting}
                                 className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
                             >
-                                <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M22,12c0-5.52-4.48-10-10-10S2,6.48,2,12c0,4.84,3.44,8.87,8,9.8V15H8v-3h2V9.5C10,7.57,11.57,6,13.5,6H16v3h-2 c-0.55,0-1,0.45-1,1v2h3v3h-3v6.95C18.05,21.45,22,17.19,22,12z"></path>
                                 </svg>
-                                Facebook
                             </button>
+                            <button
+                                onClick={handleAppleLogin}
+                                disabled={isSubmitting}
+                                className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            >
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M14.94,5.19A4.38,4.38,0,0,0,16,2,4.44,4.44,0,0,0,13,3.52,4.17,4.17,0,0,0,12,6.61,3.69,3.69,0,0,0,14.94,5.19Zm2.52,7.44a4.51,4.51,0,0,1,2.16-3.81,4.66,4.66,0,0,0-3.66-2c-1.56-.16-3,.91-3.83.91s-2-.89-3.3-.87A4.92,4.92,0,0,0,4.69,9.39C2.93,12.45,4.24,17,6,19.47,6.8,20.68,7.8,22.05,9.12,22s1.75-.82,3.28-.82,2,.82,3.3.79,2.22-1.23,3.06-2.45a11,11,0,0,0,1.38-2.85A4.41,4.41,0,0,1,17.46,12.63Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div className="mt-2 grid grid-cols-3 gap-3">
+                            <div className="text-center text-xs text-gray-500">Google</div>
+                            <div className="text-center text-xs text-gray-500">Facebook</div>
+                            <div className="text-center text-xs text-gray-500">Apple</div>
                         </div>
                     </div>
                     
