@@ -13,7 +13,7 @@ import OrderHistory from './pages/OrderHistory.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import { jwtDecode } from 'jwt-decode';
-// Removed App.css import
+import { logout } from './services/api.js'
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,17 +22,19 @@ function App() {
     useEffect(() => {
         // Check if user is logged in on app load
         const token = localStorage.getItem('token');
-        if (token) {
+        const userInfo = localStorage.getItem('user');
+
+        if (token && userInfo) {
             try {
                 const decodedToken = jwtDecode(token);
                 const currentTime = Date.now() / 1000;
 
                 if (decodedToken.exp > currentTime) {
                     setIsAuthenticated(true);
-                    setUser({ id: decodedToken.userId });
+                    setUser(JSON.parse(userInfo));
                 } else {
                     // Token expired
-                    localStorage.removeItem('token');
+                    handleLogout();
                 }
             } catch (error) {
                 console.error('Invalid token:', error);
@@ -41,23 +43,32 @@ function App() {
         }
     }, []);
 
-    const handleLogin = (token) => {
+    const handleLogin = (token, userData) => {
         localStorage.setItem('token', token);
-        const decodedToken = jwtDecode(token);
+        localStorage.setItem('user', JSON.stringify(userData));
         setIsAuthenticated(true);
-        setUser({ id: decodedToken.userId });
+        setUser(userData);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        setUser(null);
+    const handleLogout = async () => {
+        try {
+            // Call logout API
+            await logout();
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            // Clean up local storage and state regardless of API response
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setIsAuthenticated(false);
+            setUser(null);
+        }
     };
 
     return (
         <Router>
             <div className="flex flex-col min-h-screen">
-                <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+                <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} user={user} />
                 <main className="flex-grow">
                     <Routes>
                         <Route path="/" element={<Home />} />
