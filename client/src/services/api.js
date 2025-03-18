@@ -8,6 +8,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true, // Enable sending cookies with requests
 });
 
 // Add request interceptor to include auth token
@@ -25,6 +26,7 @@ api.interceptors.request.use(
 // Auth endpoints
 export const register = (userData) => api.post('/auth/register', userData);
 export const login = (credentials) => api.post('/auth/login', credentials);
+export const logout = () => api.post('/auth/logout');
 
 // Products endpoints
 export const getProducts = () => api.get('/products');
