@@ -13,7 +13,7 @@ import OrderHistory from './pages/OrderHistory.jsx';
 import NotFound from './pages/NotFound.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 import { jwtDecode } from 'jwt-decode';
-import { logout } from './services/api.js'
+import { logout } from './services/api.js';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -23,7 +23,7 @@ function App() {
         // Check if user is logged in on app load
         const token = localStorage.getItem('token');
         const userInfo = localStorage.getItem('user');
-
+        
         if (token && userInfo) {
             try {
                 const decodedToken = jwtDecode(token);
@@ -38,7 +38,7 @@ function App() {
                 }
             } catch (error) {
                 console.error('Invalid token:', error);
-                localStorage.removeItem('token');
+                handleLogout();
             }
         }
     }, []);
