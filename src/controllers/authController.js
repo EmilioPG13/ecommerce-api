@@ -24,8 +24,34 @@ exports.loginUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid password' });
         }
+
+        // Generate JWT token
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
+
+        // Set up session data
+        req.session.user = {
+            id: user.id,
+            email: user.email,
+            name: user.name
+        };
+        req.session.isLoggedIn = true;
+
+        res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+// Add logout endpoint
+exports.logoutUser = async (req, res) => {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to logout' });
+            }
+            res.clearCookie('connect.sid'); // Clear the session cookie
+            res.json({ message: 'Logged out successfully' });
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
