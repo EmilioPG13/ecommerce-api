@@ -54,6 +54,7 @@ function App() {
         try {
             // Call logout API
             await logout();
+            console.log('Logout API call successful');
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
@@ -62,6 +63,7 @@ function App() {
             localStorage.removeItem('user');
             setIsAuthenticated(false);
             setUser(null);
+            console.log('Local state cleared');
         }
     };
 
