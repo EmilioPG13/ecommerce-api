@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = ({ isAuthenticated, onLogout }) => {
+const Header = ({ isAuthenticated, onLogout, user }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        onLogout();
+    };
 
     return (
         <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
@@ -41,9 +46,12 @@ const Header = ({ isAuthenticated, onLogout }) => {
                                 <>
                                     <li><Link to="/cart" className="font-medium hover:text-blue-100 transition-colors">Cart</Link></li>
                                     <li><Link to="/orders" className="font-medium hover:text-blue-100 transition-colors">Orders</Link></li>
+                                    <li className="text-blue-100">
+                                        {user ? `Hello, ${user.name}` : ''}
+                                    </li>
                                     <li>
                                         <button 
-                                            onClick={onLogout} 
+                                            onClick={handleLogout} 
                                             className="bg-white text-blue-700 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors"
                                         >
                                             Logout
@@ -78,9 +86,12 @@ const Header = ({ isAuthenticated, onLogout }) => {
                                 <>
                                     <li><Link to="/cart" className="block font-medium hover:text-blue-200">Cart</Link></li>
                                     <li><Link to="/orders" className="block font-medium hover:text-blue-200">Orders</Link></li>
+                                    <li className="text-blue-100 font-medium">
+                                        {user ? `Hello, ${user.name}` : ''}
+                                    </li>
                                     <li>
                                         <button 
-                                            onClick={onLogout} 
+                                            onClick={handleLogout} 
                                             className="w-full text-left bg-blue-700 px-3 py-2 rounded font-medium hover:bg-blue-800"
                                         >
                                             Logout
