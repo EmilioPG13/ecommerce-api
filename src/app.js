@@ -2,9 +2,29 @@ const express = require('express');
 const app = express();
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger/swagger.json');
+const session = require('express-session');
+const cors = require('cors');
+
+// CORS configuration
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' ? 'your-production-domain.com' : 'http://localhost:3001'
+    credentials: true // This allows cookies to be sent in cross-origin requests
+}))
 
 // Middleware
 app.use(express.json());
+
+// Session configuration
+app.use(session({
+    secret: process.env.JWT_SECRET, // use existing secret
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 // 24hours
+    }
+}));
 
 // Swagger setup
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
