@@ -8,7 +8,7 @@ const cors = require('cors');
 // CORS configuration
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' ? 'your-production-domain.com' : 'http://localhost:3001',
-    credentials: true // This allows cookies to be sent in cross-origin requests
+    credentials: true
 }));
 
 // Middleware
