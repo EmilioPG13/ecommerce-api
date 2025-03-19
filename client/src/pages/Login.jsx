@@ -290,3 +290,5 @@ const Login = ({ onLogin }) => {
 };
 
 export default Login;
+
+// LOGIN WORKS! (Milestone)
