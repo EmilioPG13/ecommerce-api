@@ -68,7 +68,7 @@ const Login = ({ onLogin }) => {
         try {
             const { email, password } = formData;
             const response = await login({ email, password });
-            onLogin(response.data.token);
+            onLogin(response.data.token, response.data.user);
         } catch (error) {
             setSubmitError(
                 error.response?.data?.error || 
