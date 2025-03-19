@@ -7,8 +7,10 @@ const cors = require('cors');
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? 'your-production-domain.com' : 'http://localhost:3001',
-    credentials: true
+    origin: 'http://localhost:3001',  // Explicitly set to the React dev server 
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Middleware
@@ -16,13 +18,13 @@ app.use(express.json());
 
 // Session configuration
 app.use(session({
-    secret: process.env.JWT_SECRET, // use existing secret
+    secret: process.env.JWT_SECRET || 'your-fallback-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 // 24hours
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
 
