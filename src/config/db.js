@@ -1,18 +1,26 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+// Enable logging during troubleshooting
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
-    logging: false, // Disable logging; default: console.log
+    logging: true, // Change to true to see SQL queries
+    retry: {
+        max: 3
+    }
 });
 
 // Test the database connection
-sequelize.authenticate()
-    .then(() => {
+const testConnection = async () => {
+    try {
+        await sequelize.authenticate();
         console.log('We are connected boss');
-    })
-    .catch(err => {
-        console.error('Your connection is cooked', err);
-    });
+        console.log('Connected to:', process.env.DATABASE_URL);
+    } catch (err) {
+        console.error('Your connection is cooked:', err);
+    }
+};
+
+testConnection();
 
 module.exports = sequelize;
