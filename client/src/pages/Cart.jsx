@@ -113,73 +113,75 @@ const Cart = ({ userId }) => {
     );
 
     return (
-        <div className='container mx-auto px-4 py-8'>
-            <h1 className='text-3xl font-bold text-center mb-8'>Your Shopping Cart</h1>
-
-            <div className='bg-white rounded-lg shadow-lg overflow-hidden mb-8'>
-                <div className='p-6'>
-                    <table className='w-full'>
+        <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold text-center mb-8">Your Shopping Cart</h1>
+            
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
+                <div className="p-6">
+                    <table className="w-full">
                         <thead>
-                            <tr className='border-b'>
-                                <th className='text-left py-3'>Product</th>
-                                <th className='text-center py-3'>Price</th>
-                                <th className='text-center py-3'>Quantity</th>
-                                <th className='text-right py-3'>Subtotal</th>
+                            <tr className="border-b">
+                                <th className="text-left py-3">Product</th>
+                                <th className="text-center py-3">Price</th>
+                                <th className="text-center py-3">Quantity</th>
+                                <th className="text-right py-3">Subtotal</th>
+                                <th className="py-3"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {cartItems.map(item => {
                                 const product = products[item.product_id];
                                 return product ? (
-                                    <tr key={item.id} className='border-b'>
-                                        <td className='py-4'>
-                                            <div className='flex item-center'>
-                                                <div className='h-16 w-16 mr-4 bg-gray-200 rounded overflow-hidden'>
+                                    <tr key={item.id} className="border-b">
+                                        <td className="py-4">
+                                            <div className="flex items-center">
+                                                <div className="h-16 w-16 mr-4 bg-gray-200 rounded overflow-hidden">
                                                     <img 
                                                         src={`https://via.placeholder.com/100?text=${encodeURIComponent(product.name.substring(0, 10))}`}
                                                         alt={product.name}
-                                                        className="w-full h-full object-cover" 
+                                                        className="w-full h-full object-cover"
                                                     />
                                                 </div>
                                                 <div>
-                                                    <Link to={`/product/${product.id}`} className='text-blue-600 hover:underline'>
+                                                    <Link to={`/products/${product.id}`} className="text-blue-600 hover:underline">
                                                         {product.name}
                                                     </Link>
-                                                    <p className='text-gray-500 text-sm mt-1 line-clamp-1'>{product.description}</p>
+                                                    <p className="text-gray-500 text-sm mt-1 line-clamp-1">{product.description}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className='py-4 text-center'>${parseFloat(product.price).toFixed(2)}</td>
-                                        <td className='py-4'>
-                                            <div className='flex justify-center'>
-                                                <button
+                                        <td className="py-4 text-center">${parseFloat(product.price).toFixed(2)}</td>
+                                        <td className="py-4">
+                                            <div className="flex justify-center">
+                                                <button 
                                                     onClick={() => handleQuantityChange(item.id, item.quantity - 1, item.product_id)}
+                                                    className="px-2 py-1 border rounded-l-md bg-gray-100 hover:bg-gray-200"
                                                 >
                                                     -
                                                 </button>
                                                 <input 
-                                                    type='number'
+                                                    type="number"
                                                     value={item.quantity}
                                                     onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1, item.product_id)}
-                                                    className='w-12 text-center border-t border-b'
+                                                    className="w-12 text-center border-t border-b"
                                                     min="1"
                                                     max={product.stock_quantity}
                                                 />
-                                                <button
+                                                <button 
                                                     onClick={() => handleQuantityChange(item.id, item.quantity + 1, item.product_id)}
-                                                    className='px-2 py-1 border rounder-r-md bg-gray-100 hover:bg-gray-200'
+                                                    className="px-2 py-1 border rounded-r-md bg-gray-100 hover:bg-gray-200"
                                                 >
                                                     +
                                                 </button>
                                             </div>
                                         </td>
-                                        <td>
+                                        <td className="py-4 text-right font-medium">
                                             ${(parseFloat(product.price) * item.quantity).toFixed(2)}
                                         </td>
-                                        <td className='p-4 text-right'>
-                                            <button
+                                        <td className="py-4 text-right">
+                                            <button 
                                                 onClick={() => handleRemoveItem(item.id)}
-                                                className='text-red-500 hover:text-red-700'
+                                                className="text-red-500 hover:text-red-700"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -192,45 +194,47 @@ const Cart = ({ userId }) => {
                         </tbody>
                     </table>
                 </div>
-
-                <div className='flex flex-col md:flex-row gap-6 justify-between'>
-                    <div className='md:w-1/2'>
-                        <Link to='/products' className='text-blue-600 hover:underline flex items-center'>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                            </svg>
-                            Continue Shopping
-                        </Link>
+            </div>
+            
+            <div className="flex flex-col md:flex-row gap-6 justify-between">
+                <div className="md:w-1/2">
+                    <Link to="/products" className="text-blue-600 hover:underline flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                        </svg>
+                        Continue Shopping
+                    </Link>
+                </div>
+                
+                <div className="md:w-1/2 bg-gray-50 p-6 rounded-lg shadow-md">
+                    <div className="flex justify-between mb-4">
+                        <span className="text-gray-600">Subtotal:</span>
+                        <span className="font-medium">${calculateTotal()}</span>
                     </div>
-
-                    <div className='md:w-1/2 bg-gray-50 p-6 rounded-lg shadow-md'>
-                        <div className='flex justify-between mb-4'>
-                            <span className='text-gray-600'>Subtotal:</span>
-                            <span>${calculateTotal()}</span>
-                        </div>
-                        <div className='flex justify-between mb-4'>
-                            <span className='text-gray-600'>Shipping:</span>
-                            <span className='font-medium'>Calculated at checkout</span>
-                        </div>
-                        <div className='border-t border-gray-200 my-4'></div>
-                        <div className='flex justify-between mb-6'>
-                            <span className='text-lg font-bold'>Estimated Total:</span>
-                            <span className='text-lg font-bold'>${calculateTotal()}</span>
-                        </div>
-
-                        <button
-                            onClick={handleCheckout}
-                            className='w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-slate-700 transition-colors'
-                        >
-                            Proceed to Checkout
-                        </button>
-
-                        <div className='mt-4 text-center text-gray-500 text-sm'>
-                            <p>Secure chckout powered by Stripe</p>
-                        </div>
+                    <div className="flex justify-between mb-4">
+                        <span className="text-gray-600">Shipping:</span>
+                        <span className="font-medium">Calculated at checkout</span>
+                    </div>
+                    <div className="border-t border-gray-200 my-4"></div>
+                    <div className="flex justify-between mb-6">
+                        <span className="text-lg font-bold">Estimated Total:</span>
+                        <span className="text-lg font-bold">${calculateTotal()}</span>
+                    </div>
+                    
+                    <button 
+                        onClick={handleCheckout}
+                        className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                        Proceed to Checkout
+                    </button>
+                    
+                    <div className="mt-4 text-center text-gray-500 text-sm">
+                        <p>Secure checkout powered by Stripe</p>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
+
+export default Cart;
