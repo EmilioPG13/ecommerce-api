@@ -304,7 +304,7 @@ const CheckoutForm = ({ cart, cartItems, products, userId, onSuccess }) => {
     );
 };
 
-// Main Chekout Component
+// Main Checkout Component
 const Checkout = ({ userId }) => {
     const [cart, setCart] = useState(null);
     const [cartItems, setCartItems] = useState([]);
@@ -351,8 +351,8 @@ const Checkout = ({ userId }) => {
         setOrderComplete(true);
     };
 
-    if (loading) return <div className="flex justify-center items-center py-20 text-green-600">Loading checkout information...</div>
-
+    if (loading) return <div className="flex justify-center items-center py-20 text-gray-600">Loading checkout information...</div>;
+    
     if (error) return (
         <div className="container mx-auto px-4 py-12">
             <div className="text-red-500 text-center py-8">{error}</div>
@@ -367,10 +367,10 @@ const Checkout = ({ userId }) => {
     if (!cartItems.length) return (
         <div className="container mx-auto px-4 py-12">
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                <h2 className="text-2x1 font-bold text-gray-800 mb-4">Your cart is empy</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
                 <p className="text-gray-600 mb-6">You need to add items to your cart before checking out.</p>
-                <Link
-                    to="/products"
+                <Link 
+                    to="/products" 
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
                 >
                     Browse Products
@@ -381,31 +381,31 @@ const Checkout = ({ userId }) => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3x1 font-bold text-center mb-8">Checkout</h1>
-
+            <h1 className="text-3xl font-bold text-center mb-8">Checkout</h1>
+            
             <div className="flex flex-col lg:flex-row gap-8">
                 <div className="lg:w-2/3">
                     <Elements stripe={stripePromise}>
                         <CheckoutForm 
-                            cart={cart}
-                            cartItems={cartItems}
-                            products={products}
-                            userId={userId}
-                            onSuccess={handleCheckoutSuccess}
+                            cart={cart} 
+                            cartItems={cartItems} 
+                            products={products} 
+                            userId={userId} 
+                            onSuccess={handleCheckoutSuccess} 
                         />
                     </Elements>
                 </div>
-
+                
                 <div className="lg:w-1/3">
                     <div className="bg-gray-50 p-6 rounded-lg shadow-md">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h3>
-
+                        
                         <div className="space-y-4 mb-6">
                             {cartItems.map(item => {
                                 const product = products[item.product_id];
                                 return product ? (
                                     <div key={item.id} className="flex justify-between">
-                                        <div className="flex item-center">
+                                        <div className="flex items-center">
                                             <div className="h-10 w-10 mr-3 bg-gray-200 rounded overflow-hidden">
                                                 <img 
                                                     src={`https://via.placeholder.com/50?text=${encodeURIComponent(product.name.substring(0, 2))}`}
@@ -425,10 +425,32 @@ const Checkout = ({ userId }) => {
                                 ) : null;
                             })}
                         </div>
-
+                        
                         <div className="border-t border-gray-200 pt-4">
                             <div className="flex justify-between my-2">
                                 <span className="text-gray-600">Subtotal</span>
+                                <span className="font-medium">
+                                    ${cartItems.reduce((total, item) => {
+                                        const product = products[item.product_id];
+                                        return total + (product ? parseFloat(product.price) * item.quantity : 0);
+                                    }, 0).toFixed(2)}
+                                </span>
+                            </div>
+                            <div className="flex justify-between my-2">
+                                <span className="text-gray-600">Shipping</span>
+                                <span className="font-medium">$5.99</span>
+                            </div>
+                            <div className="flex justify-between my-2">
+                                <span className="text-gray-600">Tax</span>
+                                <span className="font-medium">
+                                    ${(cartItems.reduce((total, item) => {
+                                        const product = products[item.product_id];
+                                        return total + (product ? parseFloat(product.price) * item.quantity : 0);
+                                    }, 0) * 0.08).toFixed(2)}
+                                </span>
+                            </div>
+                            <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between">
+                                <span className="text-lg font-bold">Total</span>
                                 <span className="text-lg font-bold">
                                     ${(
                                         cartItems.reduce((total, item) => {
@@ -444,6 +466,6 @@ const Checkout = ({ userId }) => {
             </div>
         </div>
     );
-}
+};
 
 export default Checkout;
