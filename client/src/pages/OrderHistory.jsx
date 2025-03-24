@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getUserOrders } from '../services/api';
 
 const OrderHistory = ({ userId }) => {
-    const [order, setOrder] = useState([]);
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,19 +25,19 @@ const OrderHistory = ({ userId }) => {
             fetchOrders();
         } else {
             setLoading(false);
-            setError('Please log in to view your order history')
+            setError('Please log in to view your order history');
         }
     }, [userId]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefinded, options);
+        return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
-    if (loading) return <div className="flex justify-center items-center py-20 text-gray-600">Loading your orders...</div>
-
+    if (loading) return <div className="flex justify-center items-center py-20 text-gray-600">Loading your orders...</div>;
+    
     if (error) return (
-        <div className="containter mx-auto px-4 py-12">
+        <div className="container mx-auto px-4 py-12">
             <div className="text-red-500 text-center py-8">{error}</div>
             <div className="text-center">
                 <Link to="/products" className="text-blue-600 hover:underline">
@@ -48,24 +48,26 @@ const OrderHistory = ({ userId }) => {
     );
 
     if (!orders.length) return (
-        <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">You don't have any orders yet</h2>
-            <p>Once you make a purchase, your orders will appear here.</p>
-            <Link
-                to="/products"
-                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
-            >
-                Browse Products
-            </Link>
+        <div className="container mx-auto px-4 py-12">
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">You don't have any orders yet</h2>
+                <p className="text-gray-600 mb-6">Once you make a purchase, your orders will appear here.</p>
+                <Link 
+                    to="/products" 
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
+                >
+                    Browse Products
+                </Link>
+            </div>
         </div>
     );
 
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-center mb-8">Your Order History</h1>
-
+            
             <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className='overflow-x-auto'>
+                <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
@@ -96,13 +98,13 @@ const OrderHistory = ({ userId }) => {
                                         <span className="text-sm text-gray-500">{formatDate(order.created_at)}</span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className="text-sm text-gray-900">{parseFloat(order.total_price).toFixed(2)}</span>
+                                        <span className="text-sm text-gray-900">${parseFloat(order.total_price).toFixed(2)}</span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                            ${order.status === 'Delivered'
-                                                ? 'bg-green-100 text-green-800'
-                                                : order.status === 'Shipped'
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            ${order.status === 'Delivered' 
+                                                ? 'bg-green-100 text-green-800' 
+                                                : order.status === 'Shipped' 
                                                 ? 'bg-blue-100 text-blue-800'
                                                 : order.status === 'Processing'
                                                 ? 'bg-yellow-100 text-yellow-800'
