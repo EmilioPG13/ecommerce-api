@@ -11,17 +11,17 @@ const Home = () => {
             try {
                 // First try to get products from your backend
                 const localResponse = await axios.get('/api/products');
-                
+
                 // If we have local products, use them
                 if (localResponse.data && localResponse.data.length > 0) {
                     setFeaturedProducts(localResponse.data.slice(0, 4));
                     setLoading(false);
                     return;
                 }
-                
+
                 // If no local products, fetch from external API
                 const externalResponse = await axios.get('https://fakestoreapi.com/products?limit=4');
-                
+
                 // Transform the data to match your product model
                 const transformedProducts = externalResponse.data.map(product => ({
                     id: product.id,
@@ -30,7 +30,7 @@ const Home = () => {
                     price: product.price,
                     image: product.image
                 }));
-                
+
                 setFeaturedProducts(transformedProducts);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -69,14 +69,14 @@ const Home = () => {
                             Discover amazing deals on high-quality items. Free shipping on orders over $50!
                         </p>
                         <div className="flex justify-center space-x-4">
-                            <Link 
-                                to='/products' 
+                            <Link
+                                to='/products'
                                 className="bg-white text-blue-700 px-6 py-3 rounded-md font-medium hover:bg-blue-50 transition-colors shadow-md"
                             >
                                 Shop Now
                             </Link>
-                            <Link 
-                                to='/register' 
+                            <Link
+                                to='/register'
                                 className="bg-transparent border border-white text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
                             >
                                 Create Account
@@ -90,7 +90,7 @@ const Home = () => {
             <div className="py-16 bg-white">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-12">Why Shop With Us</h2>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="text-center p-6">
                             <div className="bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -101,7 +101,7 @@ const Home = () => {
                             <h3 className="text-xl font-semibold mb-2">Quality Products</h3>
                             <p className="text-gray-600">We source only the best quality products for our customers.</p>
                         </div>
-                        
+
                         <div className="text-center p-6">
                             <div className="bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -111,7 +111,7 @@ const Home = () => {
                             <h3 className="text-xl font-semibold mb-2">Fast Delivery</h3>
                             <p className="text-gray-600">Get your orders delivered to your doorstep quickly.</p>
                         </div>
-                        
+
                         <div className="text-center p-6">
                             <div className="bg-blue-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +129,7 @@ const Home = () => {
             <section className="py-16 bg-gray-50">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         {loading ? (
                             // Show skeleton loaders while loading
@@ -147,8 +147,8 @@ const Home = () => {
                             featuredProducts.map(product => (
                                 <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                                     <div className="h-48 overflow-hidden">
-                                        <img 
-                                            src={product.image || `https://via.placeholder.com/300x200?text=${encodeURIComponent(product.name)}`}
+                                        <img
+                                            src={product.image || `https://placehold.co/300x200?text=${encodeURIComponent(product.name)}`}
                                             alt={product.name}
                                             className="w-full h-full object-contain p-2"
                                         />
@@ -156,7 +156,7 @@ const Home = () => {
                                     <div className="p-4">
                                         <h3 className="font-bold text-lg">{product.name}</h3>
                                         <p className="text-blue-600 font-medium mt-1">${parseFloat(product.price).toFixed(2)}</p>
-                                        <Link 
+                                        <Link
                                             to={`/products/${product.id}`}
                                             className="mt-3 block text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
                                         >
@@ -172,10 +172,10 @@ const Home = () => {
                             </div>
                         )}
                     </div>
-                    
+
                     <div className="text-center mt-8">
-                        <Link 
-                            to="/products" 
+                        <Link
+                            to="/products"
                             className="inline-flex items-center px-6 py-3 border border-blue-600 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-blue-50"
                         >
                             View All Products
