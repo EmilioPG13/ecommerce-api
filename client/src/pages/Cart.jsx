@@ -15,19 +15,29 @@ const Cart = ({ userId }) => {
             try {
                 setLoading(true);
                 const response = await getCart(userId);
+                console.log('Cart response:', response.data); // Debug the response structure
+
+
                 setCart(response.data);
 
-                // Fetch cart items with product details
-                if (response.data && response.data.CartItems) {
-                    setCartItems(response.data.CartItems);
-
-                    // Create a map of product details
-                    const productMap = {};
-                    for (const item of response.data.CartItems) {
-                        productMap[item.product_id] = item.Product;
-                    }
-                    setProducts(productMap);
+                // Check for different potential response formats
+                let items = [];
+                if (Array.isArray(response.data)) {
+                    items = response.data;
+                } else if (response.data?.CartItems) {
+                    items = response.data.CartItems;
+                } else if (response.data?.cartItems) {
+                    items = response.data.cartItems;
                 }
+
+                setCartItems(items);
+
+                // Create a map of product details
+                const productMap = {};
+                for (const item of items) {
+                    productMap[item.product_id] = item.Product || item.product;
+                }
+                setProducts(productMap);
             } catch (err) {
                 console.error('Error fetching cart:', err);
                 setError('Failed to load your cart. Please try again later.');
@@ -60,8 +70,8 @@ const Cart = ({ userId }) => {
             }
 
             await updateCartItem(itemId, { quantity: newQuantity });
-            
-            setCartItems(cartItems.map(item => 
+
+            setCartItems(cartItems.map(item =>
                 item.id === itemId ? { ...item, quantity: newQuantity } : item
             ));
         } catch (err) {
@@ -85,7 +95,7 @@ const Cart = ({ userId }) => {
     };
 
     if (loading) return <div className="flex justify-center items-center py-20 text-gray-600">Loading your cart...</div>;
-    
+
     if (error) return (
         <div className="container mx-auto px-4 py-12">
             <div className="text-red-500 text-center py-8">{error}</div>
@@ -102,8 +112,8 @@ const Cart = ({ userId }) => {
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
                 <p className="text-gray-600 mb-6">Looks like you haven't added any products to your cart yet.</p>
-                <Link 
-                    to="/products" 
+                <Link
+                    to="/products"
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
                 >
                     Browse Products
@@ -115,7 +125,7 @@ const Cart = ({ userId }) => {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-center mb-8">Your Shopping Cart</h1>
-            
+
             <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
                 <div className="p-6">
                     <table className="w-full">
@@ -136,10 +146,10 @@ const Cart = ({ userId }) => {
                                         <td className="py-4">
                                             <div className="flex items-center">
                                                 <div className="h-16 w-16 mr-4 bg-gray-200 rounded overflow-hidden">
-                                                    <img 
-                                                        src={`https://via.placeholder.com/100?text=${encodeURIComponent(product.name.substring(0, 10))}`}
+                                                    <img
+                                                        src={product.image || `https://placehold.co/300x200?text=${encodeURIComponent(product.name)}`}
                                                         alt={product.name}
-                                                        className="w-full h-full object-cover"
+                                                        className="w-full h-full object-contain p-2"
                                                     />
                                                 </div>
                                                 <div>
@@ -153,13 +163,13 @@ const Cart = ({ userId }) => {
                                         <td className="py-4 text-center">${parseFloat(product.price).toFixed(2)}</td>
                                         <td className="py-4">
                                             <div className="flex justify-center">
-                                                <button 
+                                                <button
                                                     onClick={() => handleQuantityChange(item.id, item.quantity - 1, item.product_id)}
                                                     className="px-2 py-1 border rounded-l-md bg-gray-100 hover:bg-gray-200"
                                                 >
                                                     -
                                                 </button>
-                                                <input 
+                                                <input
                                                     type="number"
                                                     value={item.quantity}
                                                     onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1, item.product_id)}
@@ -167,7 +177,7 @@ const Cart = ({ userId }) => {
                                                     min="1"
                                                     max={product.stock_quantity}
                                                 />
-                                                <button 
+                                                <button
                                                     onClick={() => handleQuantityChange(item.id, item.quantity + 1, item.product_id)}
                                                     className="px-2 py-1 border rounded-r-md bg-gray-100 hover:bg-gray-200"
                                                 >
@@ -179,7 +189,7 @@ const Cart = ({ userId }) => {
                                             ${(parseFloat(product.price) * item.quantity).toFixed(2)}
                                         </td>
                                         <td className="py-4 text-right">
-                                            <button 
+                                            <button
                                                 onClick={() => handleRemoveItem(item.id)}
                                                 className="text-red-500 hover:text-red-700"
                                             >
@@ -195,7 +205,7 @@ const Cart = ({ userId }) => {
                     </table>
                 </div>
             </div>
-            
+
             <div className="flex flex-col md:flex-row gap-6 justify-between">
                 <div className="md:w-1/2">
                     <Link to="/products" className="text-blue-600 hover:underline flex items-center">
@@ -205,7 +215,7 @@ const Cart = ({ userId }) => {
                         Continue Shopping
                     </Link>
                 </div>
-                
+
                 <div className="md:w-1/2 bg-gray-50 p-6 rounded-lg shadow-md">
                     <div className="flex justify-between mb-4">
                         <span className="text-gray-600">Subtotal:</span>
@@ -220,14 +230,14 @@ const Cart = ({ userId }) => {
                         <span className="text-lg font-bold">Estimated Total:</span>
                         <span className="text-lg font-bold">${calculateTotal()}</span>
                     </div>
-                    
-                    <button 
+
+                    <button
                         onClick={handleCheckout}
                         className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors"
                     >
                         Proceed to Checkout
                     </button>
-                    
+
                     <div className="mt-4 text-center text-gray-500 text-sm">
                         <p>Secure checkout powered by Stripe</p>
                     </div>

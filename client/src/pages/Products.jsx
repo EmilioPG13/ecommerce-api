@@ -14,10 +14,10 @@ const Products = () => {
         search: ''
     });
     const [sortOption, setSortOption] = useState('name-asc');
-    
+
     // Items per page from config
     const itemsPerPage = config.pageSize;
-    
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -32,7 +32,7 @@ const Products = () => {
             }
         };
 
-        fetchProducts(); 
+        fetchProducts();
     }, []);
 
     // Handle search and filter changes
@@ -59,7 +59,7 @@ const Products = () => {
         if (filters.maxPrice && parseFloat(product.price) > parseFloat(filters.maxPrice)) {
             return false;
         }
-        
+
         // Filter by search term (name or description)
         if (filters.search) {
             const searchLower = filters.search.toLowerCase();
@@ -68,10 +68,10 @@ const Products = () => {
                 product.description.toLowerCase().includes(searchLower)
             );
         }
-        
+
         return true;
     });
-    
+
     // Sort products
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         switch (sortOption) {
@@ -86,12 +86,12 @@ const Products = () => {
                 return a.name.localeCompare(b.name);
         }
     });
-    
+
     // Pagination
     const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedProducts = sortedProducts.slice(startIndex, startIndex + itemsPerPage);
-    
+
     // Pagination controls
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -116,14 +116,14 @@ const Products = () => {
             </div>
         );
     }
-    
+
     if (error) return <div className='text-red-500 text-center py-20'>{error}</div>;
 
     return (
         <div className='py-8'>
             <div className='container mx-auto px-4'>
                 <h1 className='text-3xl font-bold text-center mb-8'>Our Products</h1>
-                
+
                 {/* Filters and Sort Section */}
                 <div className='bg-white p-4 rounded-lg shadow-md mb-8'>
                     <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
@@ -141,7 +141,7 @@ const Products = () => {
                                 className='w-full p-2 border border-gray-300 rounded-md'
                             />
                         </div>
-                        
+
                         <div>
                             <label htmlFor='minPrice' className='block text-sm font-medium text-gray-700 mb-1'>
                                 Min Price
@@ -156,7 +156,7 @@ const Products = () => {
                                 className='w-full p-2 border border-gray-300 rounded-md'
                             />
                         </div>
-                        
+
                         <div>
                             <label htmlFor='maxPrice' className='block text-sm font-medium text-gray-700 mb-1'>
                                 Max Price
@@ -171,7 +171,7 @@ const Products = () => {
                                 className='w-full p-2 border border-gray-300 rounded-md'
                             />
                         </div>
-                        
+
                         <div>
                             <label htmlFor='sort' className='block text-sm font-medium text-gray-700 mb-1'>
                                 Sort By
@@ -190,7 +190,7 @@ const Products = () => {
                         </div>
                     </div>
                 </div>
-                
+
                 {/* Results summary */}
                 <div className='mb-4 text-gray-600'>
                     {filteredProducts.length === 0 ? (
@@ -206,10 +206,10 @@ const Products = () => {
                         paginatedProducts.map(product => (
                             <div className='bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1' key={product.id}>
                                 <div className='h-48 overflow-hidden'>
-                                    <img 
-                                        src={`https://via.placeholder.com/300x200?text=${encodeURIComponent(product.name)}`}
+                                    <img
+                                        src={product.image || `https://placehold.co/300x200?text=${encodeURIComponent(product.name)}`}
                                         alt={product.name}
-                                        className='w-full h-full object-cover'
+                                        className="w-full h-full object-contain p-2"
                                     />
                                 </div>
                                 <div className='p-4'>
@@ -226,45 +226,42 @@ const Products = () => {
                         <p className='col-span-full text-center text-gray-500'>No products found matching your criteria.</p>
                     )}
                 </div>
-                
+
                 {/* Pagination controls */}
                 {totalPages > 1 && (
                     <div className='flex justify-center mt-8'>
                         <nav className='flex items-center'>
-                            <button 
+                            <button
                                 onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                                 disabled={currentPage === 1}
-                                className={`mx-1 px-3 py-1 rounded-md ${
-                                    currentPage === 1 
-                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                                className={`mx-1 px-3 py-1 rounded-md ${currentPage === 1
+                                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
+                                    }`}
                             >
                                 Previous
                             </button>
-                            
+
                             {[...Array(totalPages)].map((_, index) => (
                                 <button
                                     key={index}
                                     onClick={() => handlePageChange(index + 1)}
-                                    className={`mx-1 px-3 py-1 rounded-md ${
-                                        currentPage === index + 1
+                                    className={`mx-1 px-3 py-1 rounded-md ${currentPage === index + 1
                                             ? 'bg-blue-600 text-white'
                                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                    }`}
+                                        }`}
                                 >
                                     {index + 1}
                                 </button>
                             ))}
-                            
+
                             <button
                                 onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                                 disabled={currentPage === totalPages}
-                                className={`mx-1 px-3 py-1 rounded-md ${
-                                    currentPage === totalPages
+                                className={`mx-1 px-3 py-1 rounded-md ${currentPage === totalPages
                                         ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
+                                    }`}
                             >
                                 Next
                             </button>

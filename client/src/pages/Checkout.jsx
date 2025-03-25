@@ -37,19 +37,19 @@ const CheckoutForm = ({ cart, cartItems, products, userId, onSuccess }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!stripe || !elements) {
             // Stripe.js has not loaded yet
             return;
         }
-        
+
         setProcessing(true);
         setError(null);
-        
+
         try {
             // In a real app, you would create a payment intent on your server
             // and pass the client_secret to this function
-            
+
             // This is a simulated payment flow for demo purposes
             // In a real implementation, you would call the Stripe API
             /*
@@ -73,18 +73,18 @@ const CheckoutForm = ({ cart, cartItems, products, userId, onSuccess }) => {
                 throw new Error(error.message);
             }
             */
-            
+
             // Call your backend to process the order
             await checkout(userId);
-            
+
             setSuccess(true);
             onSuccess();
-            
+
             // Redirect to order confirmation after a short delay
             setTimeout(() => {
                 navigate('/orders');
             }, 2000);
-            
+
         } catch (err) {
             console.error('Payment processing error:', err);
             setError(err.message || 'An error occurred during checkout. Please try again.');
@@ -111,8 +111,8 @@ const CheckoutForm = ({ cart, cartItems, products, userId, onSuccess }) => {
 
     const calculateTotal = () => {
         return (
-            parseFloat(calculateSubtotal()) + 
-            parseFloat(calculateTax()) + 
+            parseFloat(calculateSubtotal()) +
+            parseFloat(calculateTax()) +
             parseFloat(calculateShipping())
         ).toFixed(2);
     };
@@ -352,7 +352,7 @@ const Checkout = ({ userId }) => {
     };
 
     if (loading) return <div className="flex justify-center items-center py-20 text-gray-600">Loading checkout information...</div>;
-    
+
     if (error) return (
         <div className="container mx-auto px-4 py-12">
             <div className="text-red-500 text-center py-8">{error}</div>
@@ -369,8 +369,8 @@ const Checkout = ({ userId }) => {
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
                 <p className="text-gray-600 mb-6">You need to add items to your cart before checking out.</p>
-                <Link 
-                    to="/products" 
+                <Link
+                    to="/products"
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
                 >
                     Browse Products
@@ -382,24 +382,24 @@ const Checkout = ({ userId }) => {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold text-center mb-8">Checkout</h1>
-            
+
             <div className="flex flex-col lg:flex-row gap-8">
                 <div className="lg:w-2/3">
                     <Elements stripe={stripePromise}>
-                        <CheckoutForm 
-                            cart={cart} 
-                            cartItems={cartItems} 
-                            products={products} 
-                            userId={userId} 
-                            onSuccess={handleCheckoutSuccess} 
+                        <CheckoutForm
+                            cart={cart}
+                            cartItems={cartItems}
+                            products={products}
+                            userId={userId}
+                            onSuccess={handleCheckoutSuccess}
                         />
                     </Elements>
                 </div>
-                
+
                 <div className="lg:w-1/3">
                     <div className="bg-gray-50 p-6 rounded-lg shadow-md">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h3>
-                        
+
                         <div className="space-y-4 mb-6">
                             {cartItems.map(item => {
                                 const product = products[item.product_id];
@@ -407,10 +407,10 @@ const Checkout = ({ userId }) => {
                                     <div key={item.id} className="flex justify-between">
                                         <div className="flex items-center">
                                             <div className="h-10 w-10 mr-3 bg-gray-200 rounded overflow-hidden">
-                                                <img 
-                                                    src={`https://via.placeholder.com/50?text=${encodeURIComponent(product.name.substring(0, 2))}`}
+                                                <img
+                                                    src={product.image || `https://placehold.co/300x200?text=${encodeURIComponent(product.name)}`}
                                                     alt={product.name}
-                                                    className="w-full h-full object-cover"
+                                                    className="w-full h-full object-contain p-2"
                                                 />
                                             </div>
                                             <div>
@@ -425,7 +425,7 @@ const Checkout = ({ userId }) => {
                                 ) : null;
                             })}
                         </div>
-                        
+
                         <div className="border-t border-gray-200 pt-4">
                             <div className="flex justify-between my-2">
                                 <span className="text-gray-600">Subtotal</span>

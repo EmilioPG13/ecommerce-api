@@ -80,11 +80,16 @@ function App() {
     const updateCartCount = async () => {
         if (user?.id) {
             try {
-                const response = await getCart(user.id);
-                const items = response.data?.CartItems || [];
+                const response = await getCart(user.id); 
+                // Check various possible response formats
+                const items = Array.isArray(response.data) ? response.data :
+                            response.data?.CartItems ||
+                            response.data?.cartItems || [];
+
+                console.log('Cart data received:', response.data);
                 setCartItemCount(items.length);
             } catch (error) {
-                console.error('Failed to fetch cart count');
+                console.error('Failed to fetch cart count:', error);
                 
             }
         }

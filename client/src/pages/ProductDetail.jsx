@@ -95,9 +95,9 @@ const ProductDetail = ({ updateCartCount }) => {
                     <div className="md:w-1/2">
                         {/* Replace with actual product image */}
                         <img
-                            src={product.image || `https://placehold.co/600x400?text=${encodeURIComponent(product.name)}`}
+                            src={product.image || `https://placehold.co/300x200?text=${encodeURIComponent(product.name)}`}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain p-2"
                         />
                     </div>
                     <div className="md:w-1/2 p-8">

@@ -45,7 +45,7 @@ const Header = ({ isAuthenticated, onLogout, user, cartItemCount = 0 }) => {
                             {isAuthenticated ? (
                                 <>
                                     <li>
-                                        <Link to="/cart" className="font-medium hover:text-blue-100 transition-colors relative">
+                                        <Link to="/cart" className="relative inline-block">
                                             Cart
                                             {cartItemCount > 0 && (
                                                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
