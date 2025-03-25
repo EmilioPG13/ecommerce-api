@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductById, addToCart, getCart, createCart } from '../services/api';
 
-const ProductDetail = () => {
+const ProductDetail = ({ updateCartCount }) => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
@@ -46,10 +46,10 @@ const ProductDetail = () => {
 
         try {
             setAddingToCart(true);
-            
+
             // Get user info from local storage
             const user = JSON.parse(localStorage.getItem('user'));
-            
+
             // First, ensure user has a cart
             let cartResponse;
             try {
@@ -58,17 +58,23 @@ const ProductDetail = () => {
                 // If no cart exists, create one
                 cartResponse = await createCart(user.id);
             }
-            
+
             const cartId = cartResponse.data.id;
-            
+
             // Add item to cart
             await addToCart({
                 cart_id: cartId,
                 product_id: product.id,
                 quantity: quantity
             });
-            
+
             setAddToCartSuccess(true);
+
+            // Call updateCartCount to refresh the cart indicator
+            if (updateCartCount) {
+                updateCartCount();
+            }
+
             setTimeout(() => setAddToCartSuccess(false), 3000);
         } catch (err) {
             console.error('Error adding to cart:', err);
@@ -88,7 +94,7 @@ const ProductDetail = () => {
                 <div className="md:flex">
                     <div className="md:w-1/2">
                         {/* Replace with actual product image */}
-                        <img 
+                        <img
                             src={`https://via.placeholder.com/600x400?text=${encodeURIComponent(product.name)}`}
                             alt={product.name}
                             className="w-full h-full object-cover"
@@ -97,14 +103,14 @@ const ProductDetail = () => {
                     <div className="md:w-1/2 p-8">
                         <h1 className="text-3xl font-bold text-gray-800 mb-4">{product.name}</h1>
                         <p className="text-2xl text-blue-600 font-bold mb-6">${product.price}</p>
-                        
+
                         <div className="bg-gray-100 p-4 rounded-lg mb-6">
                             <p className="text-gray-700 leading-relaxed">{product.description}</p>
                         </div>
-                        
+
                         <div className="mb-6">
                             <p className="text-gray-700 mb-2">
-                                Availability: 
+                                Availability:
                                 <span className={product.stock_quantity > 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
                                     {product.stock_quantity > 0 ? ' In Stock' : ' Out of Stock'}
                                 </span>
@@ -113,12 +119,12 @@ const ProductDetail = () => {
                                 <p className="text-sm text-gray-500">{product.stock_quantity} items left</p>
                             )}
                         </div>
-                        
+
                         {product.stock_quantity > 0 && (
                             <div className="flex items-center mb-8">
                                 <label htmlFor="quantity" className="text-gray-700 mr-4">Quantity:</label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     id="quantity"
                                     min="1"
                                     max={product.stock_quantity}
@@ -128,14 +134,14 @@ const ProductDetail = () => {
                                 />
                             </div>
                         )}
-                        
+
                         {addToCartSuccess && (
                             <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded">
                                 <p>Product added to cart successfully!</p>
                             </div>
                         )}
-                        
-                        <button 
+
+                        <button
                             onClick={handleAddToCart}
                             disabled={product.stock_quantity <= 0 || addingToCart}
                             className={`w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium 

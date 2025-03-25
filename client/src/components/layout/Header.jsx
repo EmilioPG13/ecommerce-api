@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = ({ isAuthenticated, onLogout, user }) => {
+const Header = ({ isAuthenticated, onLogout, user, cartItemCount = 0 }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const handleLogout = (e) => {
@@ -22,7 +22,7 @@ const Header = ({ isAuthenticated, onLogout, user }) => {
 
                     {/* Mobile menu button */}
                     <div className="md:hidden">
-                        <button 
+                        <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             className="text-white p-2 focus:outline-none"
                         >
@@ -44,14 +44,23 @@ const Header = ({ isAuthenticated, onLogout, user }) => {
 
                             {isAuthenticated ? (
                                 <>
-                                    <li><Link to="/cart" className="font-medium hover:text-blue-100 transition-colors">Cart</Link></li>
+                                    <li>
+                                        <Link to="/cart" className="font-medium hover:text-blue-100 transition-colors relative">
+                                            Cart
+                                            {cartItemCount > 0 && (
+                                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                                    {cartItemCount}
+                                                </span>
+                                            )}
+                                        </Link>
+                                    </li>
                                     <li><Link to="/orders" className="font-medium hover:text-blue-100 transition-colors">Orders</Link></li>
                                     <li className="text-blue-100">
                                         {user ? `Hello, ${user.name}` : ''}
                                     </li>
                                     <li>
-                                        <button 
-                                            onClick={handleLogout} 
+                                        <button
+                                            onClick={handleLogout}
                                             className="bg-white text-blue-700 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors"
                                         >
                                             Logout
@@ -62,8 +71,8 @@ const Header = ({ isAuthenticated, onLogout, user }) => {
                                 <>
                                     <li><Link to="/login" className="font-medium hover:text-blue-100 transition-colors">Login</Link></li>
                                     <li>
-                                        <Link 
-                                            to="/register" 
+                                        <Link
+                                            to="/register"
                                             className="bg-white text-blue-700 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors"
                                         >
                                             Register
@@ -81,17 +90,26 @@ const Header = ({ isAuthenticated, onLogout, user }) => {
                         <ul className="flex flex-col space-y-4">
                             <li><Link to="/" className="block font-medium hover:text-blue-200">Home</Link></li>
                             <li><Link to="/products" className="block font-medium hover:text-blue-200">Products</Link></li>
-                            
+
                             {isAuthenticated ? (
                                 <>
-                                    <li><Link to="/cart" className="block font-medium hover:text-blue-200">Cart</Link></li>
+                                    <li>
+                                        <Link to="/cart" className="block font-medium hover:text-blue-200 relative inline-block">
+                                            Cart
+                                            {cartItemCount > 0 && (
+                                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                                    {cartItemCount}
+                                                </span>
+                                            )}
+                                        </Link>
+                                    </li>
                                     <li><Link to="/orders" className="block font-medium hover:text-blue-200">Orders</Link></li>
                                     <li className="text-blue-100 font-medium">
                                         {user ? `Hello, ${user.name}` : ''}
                                     </li>
                                     <li>
-                                        <button 
-                                            onClick={handleLogout} 
+                                        <button
+                                            onClick={handleLogout}
                                             className="w-full text-left bg-blue-700 px-3 py-2 rounded font-medium hover:bg-blue-800"
                                         >
                                             Logout
