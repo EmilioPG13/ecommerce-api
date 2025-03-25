@@ -1,7 +1,61 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Home = () => {
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                // First try to get products from your backend
+                const localResponse = await axios.get('/api/products');
+                
+                // If we have local products, use them
+                if (localResponse.data && localResponse.data.length > 0) {
+                    setFeaturedProducts(localResponse.data.slice(0, 4));
+                    setLoading(false);
+                    return;
+                }
+                
+                // If no local products, fetch from external API
+                const externalResponse = await axios.get('https://fakestoreapi.com/products?limit=4');
+                
+                // Transform the data to match your product model
+                const transformedProducts = externalResponse.data.map(product => ({
+                    id: product.id,
+                    name: product.title,
+                    description: product.description,
+                    price: product.price,
+                    image: product.image
+                }));
+                
+                setFeaturedProducts(transformedProducts);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                // If all else fails, use the Dummy JSON API
+                try {
+                    const fallbackResponse = await axios.get('https://dummyjson.com/products?limit=4');
+                    const fallbackProducts = fallbackResponse.data.products.map(product => ({
+                        id: product.id,
+                        name: product.title,
+                        description: product.description,
+                        price: product.price,
+                        image: product.thumbnail
+                    }));
+                    setFeaturedProducts(fallbackProducts);
+                } catch (fallbackError) {
+                    console.error('Failed to fetch fallback products:', fallbackError);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     return (
         <div>
             {/* Hero section */}
@@ -77,15 +131,46 @@ const Home = () => {
                     <h2 className="text-3xl font-bold text-center mb-8">Featured Products</h2>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                        {[1, 2, 3, 4].map(item => (
-                            <div key={item} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                                <div className="bg-gray-300 h-48 animate-pulse"></div>
-                                <div className="p-4">
-                                    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2 animate-pulse"></div>
-                                    <div className="h-4 bg-gray-300 rounded w-1/2 animate-pulse"></div>
+                        {loading ? (
+                            // Show skeleton loaders while loading
+                            [1, 2, 3, 4].map(item => (
+                                <div key={item} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                                    <div className="bg-gray-300 h-48 animate-pulse"></div>
+                                    <div className="p-4">
+                                        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2 animate-pulse"></div>
+                                        <div className="h-4 bg-gray-300 rounded w-1/2 animate-pulse"></div>
+                                    </div>
                                 </div>
+                            ))
+                        ) : featuredProducts.length > 0 ? (
+                            // Show actual products
+                            featuredProducts.map(product => (
+                                <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                                    <div className="h-48 overflow-hidden">
+                                        <img 
+                                            src={product.image || `https://via.placeholder.com/300x200?text=${encodeURIComponent(product.name)}`}
+                                            alt={product.name}
+                                            className="w-full h-full object-contain p-2"
+                                        />
+                                    </div>
+                                    <div className="p-4">
+                                        <h3 className="font-bold text-lg">{product.name}</h3>
+                                        <p className="text-blue-600 font-medium mt-1">${parseFloat(product.price).toFixed(2)}</p>
+                                        <Link 
+                                            to={`/products/${product.id}`}
+                                            className="mt-3 block text-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition"
+                                        >
+                                            View Details
+                                        </Link>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            // No products case
+                            <div className="col-span-full text-center text-gray-500">
+                                No featured products available at the moment.
                             </div>
-                        ))}
+                        )}
                     </div>
                     
                     <div className="text-center mt-8">
