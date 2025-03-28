@@ -11,7 +11,7 @@ const CartItem = sequelize.define('CartItem', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Carts', // Name of the table being referenced
+            model: 'Carts',
             key: 'id',
         },
     },
@@ -19,7 +19,7 @@ const CartItem = sequelize.define('CartItem', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'Products', // Name of the table being referenced
+            model: 'Products',
             key: 'id',
         },
     },
@@ -27,12 +27,16 @@ const CartItem = sequelize.define('CartItem', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    price: {  // Add this field to store the price at the time of adding to cart
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
 }, {
-    timestamps: false, // Disable automatic timestamps
+    timestamps: false,
 });
 
 module.exports = CartItem;

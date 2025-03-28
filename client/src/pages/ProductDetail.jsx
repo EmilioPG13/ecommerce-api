@@ -43,13 +43,13 @@ const ProductDetail = ({ updateCartCount }) => {
             navigate('/login', { state: { from: `/products/${id}` } });
             return;
         }
-
+    
         try {
             setAddingToCart(true);
-
+    
             // Get user info from local storage
             const user = JSON.parse(localStorage.getItem('user'));
-
+    
             // First, ensure user has a cart
             let cartResponse;
             try {
@@ -58,23 +58,24 @@ const ProductDetail = ({ updateCartCount }) => {
                 // If no cart exists, create one
                 cartResponse = await createCart(user.id);
             }
-
+    
             const cartId = cartResponse.data.id;
-
-            // Add item to cart
+    
+            // Add item to cart with price
             await addToCart({
                 cart_id: cartId,
                 product_id: product.id,
-                quantity: quantity
+                quantity: quantity,
+                price: product.price // Include price in cart item
             });
-
+    
             setAddToCartSuccess(true);
-
+    
             // Call updateCartCount to refresh the cart indicator
             if (updateCartCount) {
                 updateCartCount();
             }
-
+    
             setTimeout(() => setAddToCartSuccess(false), 3000);
         } catch (err) {
             console.error('Error adding to cart:', err);
