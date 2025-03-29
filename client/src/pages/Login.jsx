@@ -170,6 +170,7 @@ const Login = ({ onLogin }) => {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
+                                autoComplete="email"
                                 className={`w-full px-3 py-2 border rounded-md ${
                                     errors.email ? 'border-red-500' : 'border-gray-300'
                                 } focus:outline-none focus:ring-1 focus:ring-blue-500`}
@@ -189,6 +190,7 @@ const Login = ({ onLogin }) => {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
+                                autoComplete="current-password"
                                 className={`w-full px-3 py-2 border rounded-md ${
                                     errors.password ? 'border-red-500' : 'border-gray-300'
                                 } focus:outline-none focus:ring-1 focus:ring-blue-500`}
