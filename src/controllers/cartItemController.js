@@ -1,8 +1,15 @@
-const CartItem = require('../models/cartItemsModel');
+const CartItem = require('../models/cartItemModel');
+const Product = require('../models/productModel');
+
 
 exports.getAllCartItems = async (req, res) => {
     try {
-        const cartItems = await CartItem.findAll();
+        const cartItems = await CartItem.findAll({
+            include: [{
+                model: Product,
+                as: 'Product'
+            }]
+        });
         res.json(cartItems);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -11,11 +18,31 @@ exports.getAllCartItems = async (req, res) => {
 
 exports.getCartItemById = async (req, res) => {
     try {
-        const cartItem = await CartItem.findByPk(req.params.id);
+        const cartItem = await CartItem.findByPk(req.params.id, {
+            include: [{
+                model: Product,
+                as: 'Product'
+            }]
+        });
         if (!cartItem) {
             return res.status(404).json({ error: 'Cart item not found' });
         }
         res.json(cartItem);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.getCartItemsByCartId = async (req, res) => {
+    try {
+        const cartItems = await CartItem.findAll({
+            where: { cart_id: req.params.cartId },
+            include: [{
+                model: Product,
+                as: 'Product'
+            }]
+        });
+        res.json(cartItems);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -23,35 +50,72 @@ exports.getCartItemById = async (req, res) => {
 
 exports.createCartItem = async (req, res) => {
     try {
-        const cartItem = await CartItem.create(req.body);
-        res.status(201).json(cartItem);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        const { cart_id, product_id, quantity, price } = req.body;
+        
+        // Check if item already exists in cart
+        const existingItem = await CartItem.findOne({
+            where: {
+                cart_id,
+                product_id
+            }
+        });
+        
+        if (existingItem) {
+            // If item exists, update quantity
+            existingItem.quantity += quantity;
+            await existingItem.save();
+            return res.status(200).json(existingItem);
+        } else {
+            // If item doesn't exist, create new item
+            const cartItem = await CartItem.create({
+                cart_id,
+                product_id,
+                quantity,
+                price
+            });
+            
+            res.status(201).json(cartItem);
+        }
+    } catch (error) {
+        console.error('Error in createCartItem:', error);
+        res.status(500).json({ message: 'Server error', error: error.toString() });
     }
 };
 
 exports.updateCartItem = async (req, res) => {
     try {
-        const cartItem = await CartItem.findByPk(req.params.id);
+        const { id } = req.params;
+        const { quantity } = req.body;
+        
+        const cartItem = await CartItem.findByPk(id);
         if (!cartItem) {
-            return res.status(404).json({ error: 'Cart item not found' });
+            return res.status(404).json({ message: 'Cart item not found' });
         }
-        await cartItem.update(req.body);
-        res.json(cartItem);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        
+        cartItem.quantity = quantity;
+        await cartItem.save();
+        
+        res.status(200).json(cartItem);
+    } catch (error) {
+        console.error('Error in updateCartItem:', error);
+        res.status(500).json({ message: 'Server error', error: error.toString() });
     }
 };
 
 exports.deleteCartItem = async (req, res) => {
     try {
-        const cartItem = await CartItem.findByPk(req.params.id);
+        const { id } = req.params;
+        
+        const cartItem = await CartItem.findByPk(id);
         if (!cartItem) {
-            return res.status(404).json({ error: 'Cart item not found' });
+            return res.status(404).json({ message: 'Cart item not found' });
         }
+        
         await cartItem.destroy();
-        res.json({ message: 'Cart item deleted' });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+        
+        res.status(200).json({ message: 'Item removed from cart' });
+    } catch (error) {
+        console.error('Error in deleteCartItem:', error);
+        res.status(500).json({ message: 'Server error', error: error.toString() });
     }
 };
