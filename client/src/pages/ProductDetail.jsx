@@ -49,24 +49,25 @@ const ProductDetail = ({ updateCartCount }) => {
     
             // Get user info from local storage
             const user = JSON.parse(localStorage.getItem('user'));
-    
-            // First, ensure user has a cart
+            
+            // Get or create cart
             let cartResponse;
             try {
                 cartResponse = await getCart(user.id);
             } catch (error) {
-                // If no cart exists, create one
-                cartResponse = await createCart(user.id);
+                // If getting cart fails, explicitly create one
+                cartResponse = await createCart({ user_id: user.id });
             }
-    
+            
+            // Extract cart ID
             const cartId = cartResponse.data.id;
-    
+            
             // Add item to cart with price
             await addToCart({
                 cart_id: cartId,
-                product_id: product.id,
+                product_id: parseInt(product.id),
                 quantity: quantity,
-                price: product.price // Include price in cart item
+                price: parseFloat(product.price)
             });
     
             setAddToCartSuccess(true);

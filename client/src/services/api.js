@@ -34,13 +34,14 @@ export const getProductById = (id) => api.get(`/products/${id}`);
 
 // Cart endpoints
 export const getCart = (userId) => api.get(`/carts/${userId}`);
-export const createCart = (userId) => api.post('/carts', { user_id: userId });
-export const addToCart = (cartItem) => api.post('/cart-items', cartItem);
-export const updateCartItem = (id, cartItem) => api.put(`/cart-items/${id}`, cartItem);
+export const getCartByUserId = (userId) => { return axios.get(`/api/carts/user/${userId}`); };
+export const createCart = (userData) => api.post('/carts', userData);
+export const addToCart = (cartItemData) => api.post('/cart-items', cartItemData);
+export const updateCartItem = (id, cartItemData) => api.put(`/cart-items/${id}`, cartItemData);
 export const removeCartItem = (id) => api.delete(`/cart-items/${id}`);
-
 // Orders endpoints
 export const getUserOrders = (userId) => api.get(`/orders?userId=${userId}`);
 export const checkout = (userId) => api.post('/checkout', { userId });
+export const getCartSummary = (userId) => { return axios.get(`/api/carts/summary/${userId}`); };
 
 export default api;

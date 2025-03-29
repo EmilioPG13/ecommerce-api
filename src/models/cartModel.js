@@ -10,17 +10,14 @@ const Cart = sequelize.define('Cart', {
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: 'Users', // Name of the table being referenced
-            key: 'id',
-        },
     },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
 }, {
-    timestamps: false, // Disable automatic timestamps
+    timestamps: false,
+    tableName: 'Carts'
 });
 
 module.exports = Cart;

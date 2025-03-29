@@ -1,5 +1,5 @@
 const Cart = require('../models/cartModel');
-const CartItem = require('../models/cartItemsModel');
+const CartItem = require('../models/cartItemModel');
 const Order = require('../models/orderModel');
 const OrderItem = require('../models/orderItemsModel');
 
