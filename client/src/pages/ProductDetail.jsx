@@ -36,7 +36,7 @@ const ProductDetail = ({ updateCartCount }) => {
         }
     };
 
-    const handleAddToCart = async () => {
+        const handleAddToCart = async () => {
         // Get token to check if user is logged in
         const token = localStorage.getItem('token');
         if (!token) {
@@ -61,7 +61,7 @@ const ProductDetail = ({ updateCartCount }) => {
             
             // Extract cart ID
             const cartId = cartResponse.data.id;
-            
+    
             // Add item to cart with price
             await addToCart({
                 cart_id: cartId,
