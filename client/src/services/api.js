@@ -1,10 +1,11 @@
 import axios from 'axios';
+import config from '../config'
 
-const API_URL = process.env.REACT_APP_API_URL || '/api';
+const API_URL = config.apiUrl;
 
 // Create axios instance
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: 'http://localhost:3000/api',  // Use absolute URL instead of relative
     headers: {
         'Content-Type': 'application/json',
     },
