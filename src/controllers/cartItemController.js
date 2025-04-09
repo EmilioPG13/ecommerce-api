@@ -50,7 +50,14 @@ exports.getCartItemsByCartId = async (req, res) => {
 
 exports.createCartItem = async (req, res) => {
     try {
+        console.log('Request body:', req.body); // Debug logging
         const { cart_id, product_id, quantity, price } = req.body;
+        
+        // Validate required fields
+        if (!cart_id || !product_id || !price) {
+            console.error('Missing required fields:', { cart_id, product_id, price });
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
         
         // Check if item already exists in cart
         const existingItem = await CartItem.findOne({
@@ -70,7 +77,7 @@ exports.createCartItem = async (req, res) => {
             const cartItem = await CartItem.create({
                 cart_id,
                 product_id,
-                quantity,
+                quantity: quantity || 1,
                 price
             });
             
