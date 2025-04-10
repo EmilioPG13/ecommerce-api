@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "postinstall": "chmod +x ./node_modules/.bin/node-pre-gyp && npm rebuild bcrypt",
+    "postinstall": "chmod +x ./node_modules/.bin/node-pre-gyp && npm rebuild bcrypt --build-from-source",
     "server": "nodemon src/server.js",
     "client": "cd client && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
+    "node-gyp": "^11.2.0",
     "nodemon": "^3.0.3"
   }
 }
