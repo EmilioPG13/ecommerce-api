@@ -1,23 +1,31 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-// Enable logging during troubleshooting
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+// Extract database connection info from the environment variable provided by Render
+const databaseUrl = process.env.DATABASE_URL;
+
+// Create sequelize instance with SSL configuration for production
+const sequelize = new Sequelize(databaseUrl, {
     dialect: 'postgres',
-    logging: true, // Change to true to see SQL queries
+    logging: false, // Set to false in production
+    dialectOptions: {
+        ssl: process.env.NODE_ENV === 'production' ? {
+            require: true,
+            rejectUnauthorized: false
+        } : false
+    },
     retry: {
-        max: 3
+        max: 5 // Retry connection up to 5 times
     }
 });
 
-// Test the database connection
+// Test the database connection but don't fail if it doesn't connect immediately
 const testConnection = async () => {
     try {
         await sequelize.authenticate();
-        console.log('We are connected boss');
-        console.log('Connected to:', process.env.DATABASE_URL);
+        console.log('Database connection established successfully');
     } catch (err) {
-        console.error('Your connection is cooked:', err);
+        console.error('Database connection error:', err);
     }
 };
 
