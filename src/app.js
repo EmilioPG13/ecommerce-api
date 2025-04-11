@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('../swagger/swagger.json');
 const session = require('express-session');
 const cors = require('cors');
+require('dotenv').config();
 
 // Import models
 const User = require('./models/userModel');
@@ -77,12 +78,31 @@ OrderItem.belongsTo(Product, {
 });
 
 // CORS configuration
-app.use(cors({
-    origin: 'http://localhost:3001',  // Explicitly set to the React dev server 
+// Define allowed origins
+const allowedOrigins = [
+    'http://localhost:3001', // Keep for local testing
+];
+
+// Add the frontend URL from environment variables if it exists
+if (process.env.FRONTEND_URL) {
+    allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests) or from allowed origins
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
