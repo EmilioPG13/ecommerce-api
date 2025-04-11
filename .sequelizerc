@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-    // Go up one level from 'src' to find the 'config' directory
-    'config': path.join('..', 'config', 'config.json'),
-    // Paths relative to the 'src' directory
-    'models-path': 'models',
-    'seeders-path': 'seeders',
-    'migrations-path': 'migrations'
+    // Path relative to the project root
+    'config': path.resolve('config', 'config.json'),
+    // Paths relative to the project root
+    'models-path': path.resolve('src', 'models'), // Models are inside src/models
+    'seeders-path': path.resolve('seeders'),
+    'migrations-path': path.resolve('migrations')
 };
