@@ -1,8 +1,10 @@
 const path = require('path');
 
 module.exports = {
-    'config': path.join(process.cwd(), 'config', 'config.json'),
-    'models-path': path.join(process.cwd(), 'src', 'models'),
-    'seeders-path': path.join(process.cwd(), 'src', 'seeders'),
-    'migrations-path': path.join(process.cwd(), 'src', 'migrations')
+    // Go up one level from 'src' to find the 'config' directory
+    'config': path.join('..', 'config', 'config.json'),
+    // Paths relative to the 'src' directory
+    'models-path': 'models',
+    'seeders-path': 'seeders',
+    'migrations-path': 'migrations'
 };
