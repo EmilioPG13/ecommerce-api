@@ -5,7 +5,7 @@ const API_URL = config.apiUrl;
 
 // Create axios instance
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api',  // Use absolute URL instead of relative
+    baseURL: API_URL,  // Use absolute URL instead of relative
     headers: {
         'Content-Type': 'application/json',
     },
