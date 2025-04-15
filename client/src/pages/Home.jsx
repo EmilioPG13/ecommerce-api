@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
+import { getProducts } from '../services/api';
 
 const Home = () => {
     const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -9,45 +10,24 @@ const Home = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                // First try to get products from your backend
-                const localResponse = await axios.get('/api/products');
+                setLoading(true); // Set loading true at the start
+                // Use the imported getProducts function
+                const response = await getProducts(); 
 
-                // If we have local products, use them
-                if (localResponse.data && localResponse.data.length > 0) {
-                    setFeaturedProducts(localResponse.data.slice(0, 4));
-                    setLoading(false);
-                    return;
+                if (response.data && response.data.length > 0) {
+                    setFeaturedProducts(response.data.slice(0, 4));
+                } else {
+                    // Optional: Handle case where backend returns no products
+                    // Maybe fetch from external API as fallback if desired
+                    console.log("No products found from backend.");
+                    // Example fallback (keep or remove as needed):
+                    // const externalResponse = await axios.get('https://fakestoreapi.com/products?limit=4');
+                    // ... transformation ...
+                    // setFeaturedProducts(transformedProducts);
                 }
-
-                // If no local products, fetch from external API
-                const externalResponse = await axios.get('https://fakestoreapi.com/products?limit=4');
-
-                // Transform the data to match your product model
-                const transformedProducts = externalResponse.data.map(product => ({
-                    id: product.id,
-                    name: product.title,
-                    description: product.description,
-                    price: product.price,
-                    image: product.image
-                }));
-
-                setFeaturedProducts(transformedProducts);
             } catch (error) {
                 console.error('Error fetching products:', error);
-                // If all else fails, use the Dummy JSON API
-                try {
-                    const fallbackResponse = await axios.get('https://dummyjson.com/products?limit=4');
-                    const fallbackProducts = fallbackResponse.data.products.map(product => ({
-                        id: product.id,
-                        name: product.title,
-                        description: product.description,
-                        price: product.price,
-                        image: product.thumbnail
-                    }));
-                    setFeaturedProducts(fallbackProducts);
-                } catch (fallbackError) {
-                    console.error('Failed to fetch fallback products:', fallbackError);
-                }
+                // Handle error state if needed
             } finally {
                 setLoading(false);
             }
