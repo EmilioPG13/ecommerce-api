@@ -3,7 +3,7 @@ const axios = require('axios');
 const Product = require('./src/models/productModel');
 
 // Number of products to import
-const PRODUCTS_TO_IMPORT = 20;
+const PRODUCTS_TO_IMPORT = 50;
 
 // Function to fetch products from external API
 async function fetchProductsFromAPI() {
