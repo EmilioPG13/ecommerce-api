@@ -3,6 +3,8 @@ import config from '../config'
 
 const API_URL = config.apiUrl;
 
+console.log("API Service using Base URL:", API_URL); 
+
 // Create axios instance
 const api = axios.create({
     baseURL: API_URL,  // Use absolute URL instead of relative
