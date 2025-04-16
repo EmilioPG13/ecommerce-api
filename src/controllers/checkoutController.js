@@ -48,10 +48,7 @@ exports.checkout = async (req, res) => {
             include: [{ model: Product, as: 'Product' }], // Ensure 'Product' alias is correct
             transaction
         });
-        // Log immediately after the await completes
-        console.log(`Cart items find result: Found ${cartItems ? cartItems.length : 'null/undefined'} items.`); 
-
-        // console.log("Cart items found (detailed):", JSON.stringify(cartItems, null, 2)); // Keep this detailed log too
+        console.log(`Cart items find result: Found ${cartItems ? cartItems.length : 'null/undefined'} items.`);
 
         if (!cartItems || cartItems.length === 0) {
             console.log("Cart is empty, rolling back.");
@@ -64,13 +61,40 @@ exports.checkout = async (req, res) => {
         const orderItemsData = []; // Array to hold data for OrderItem.bulkCreate
 
         for (const item of cartItems) {
-            // ... (existing detailed logging inside loop) ...
+            console.log(`Processing item ID: ${item.id}, Product ID: ${item.product_id}`); // Log item start
+            if (!item.Product || typeof item.Product.price === 'undefined' || item.Product.price === null) {
+                console.error(`VALIDATION FAILED: Product or price missing/invalid for cart item ID ${item.id}, product_id: ${item.product_id}. Product data:`, item.Product);
+                await transaction.rollback();
+                return res.status(500).json({ error: `Product details missing or invalid for an item in your cart. Cannot complete checkout.` });
+            }
+
+            const quantity = item.quantity;
+            const priceString = item.Product.price;
+            console.log(`  Item ID ${item.id}: Quantity=${quantity}, PriceString='${priceString}'`);
+
+            if (typeof quantity !== 'number' || quantity === null || quantity <= 0) {
+                console.error(`VALIDATION FAILED: Invalid quantity for cart item ID ${item.id}. Quantity: ${quantity}`);
+                await transaction.rollback();
+                return res.status(500).json({ error: `Invalid quantity for an item in your cart. Cannot complete checkout.` });
+            }
+
+            const priceFloat = parseFloat(priceString);
+            console.log(`  Item ID ${item.id}: PriceFloat=${priceFloat}`);
+
+            if (isNaN(priceFloat)) {
+                console.error(`VALIDATION FAILED: Price calculation resulted in NaN for cart item ID ${item.id}. Original price string: '${priceString}'`);
+                await transaction.rollback();
+                return res.status(500).json({ error: `Invalid price format for an item in your cart. Cannot complete checkout.` });
+            }
+
+            calculatedTotalPrice += quantity * priceFloat;
+            console.log(`  Item ID ${item.id}: Subtotal=${quantity * priceFloat}, Running Total=${calculatedTotalPrice}`); // Log after calculation
+
             // Add data for this order item to the array
             orderItemsData.push({
-                // order_id will be set after Order is created
                 product_id: item.product_id,
                 quantity: item.quantity,
-                price: parseFloat(item.Product.price) // Use the calculated float price
+                price: priceFloat // Use the calculated float price
             });
         }
 
@@ -121,7 +145,7 @@ exports.checkout = async (req, res) => {
                 console.error('Rollback failed:', rollbackError);
             }
         } else {
-             console.log("Transaction already finished (likely due to prior error), no explicit rollback needed.");
+            console.log("Transaction already finished (likely due to prior error), no explicit rollback needed.");
         }
 
         res.status(500).json({ error: 'Checkout failed. Please try again later.', details: err.message });
