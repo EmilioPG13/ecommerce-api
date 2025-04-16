@@ -1,10 +1,9 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config(); // Load .env file for local dev if needed
+require('dotenv').config(); // Load .env file
 
-let sequelize; // Define sequelize with let to allow conditional assignment
+let sequelize;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Define SSL options for production
 const productionSslOptions = {
     require: true,
     rejectUnauthorized: false // Necessary for Render databases
@@ -13,7 +12,7 @@ const productionSslOptions = {
 // Common Sequelize options (including SSL based on NODE_ENV and retry)
 const commonOptions = {
     dialect: 'postgres',
-    logging: false, // Disable logging in production, enable for dev if needed
+    logging: false, // Disable logging by default
     dialectOptions: {
         // Apply SSL options ONLY if NODE_ENV is production
         ssl: isProduction ? productionSslOptions : false
@@ -23,14 +22,9 @@ const commonOptions = {
     }
 };
 
-// --- Check for DATABASE_URL first (used by Render) ---
-if (process.env.DATABASE_URL) {
-    console.log("Connecting using DATABASE_URL...");
-    sequelize = new Sequelize(process.env.DATABASE_URL, commonOptions);
-}
-// --- Fallback to individual variables (used by local export or .env) ---
-else if (process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME) {
-    console.log("Connecting using individual DB variables...");
+// --- Priority 1: Explicit Production Vars (for import script scenario) ---
+if (isProduction && process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME) {
+    console.log("Connecting using individual Production DB variables (NODE_ENV=production override)...");
     sequelize = new Sequelize(
         process.env.DB_NAME,
         process.env.DB_USER,
@@ -42,22 +36,44 @@ else if (process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME) {
         }
     );
 }
+// --- Priority 2: DATABASE_URL (Render default or explicit setting) ---
+else if (process.env.DATABASE_URL) {
+    console.log("Connecting using DATABASE_URL...");
+    // Pass commonOptions here too, which includes the SSL logic based on NODE_ENV
+    sequelize = new Sequelize(process.env.DATABASE_URL, commonOptions);
+}
+// --- Priority 3: Local Dev Vars (fallback if no DATABASE_URL and not forced production) ---
+else if (process.env.DB_HOST && process.env.DB_USER && process.env.DB_NAME) {
+    console.log("Connecting using individual Local DB variables...");
+    sequelize = new Sequelize(
+        process.env.DB_NAME,
+        process.env.DB_USER,
+        process.env.DB_PASSWORD,
+        {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT || 5432,
+            ...commonOptions // SSL will be false here if NODE_ENV is not 'production'
+        }
+    );
+}
 // --- Error if no connection details found ---
 else {
     console.error("Database connection details not found. Please set DATABASE_URL or DB_HOST, DB_USER, DB_PASSWORD, DB_NAME environment variables.");
-    throw new Error("Missing database configuration."); 
+    throw new Error("Missing database configuration.");
 }
 
 // Test the database connection but don't fail if it doesn't connect immediately
 const testConnection = async () => {
     try {
         // Ensure sequelize was actually initialized before testing
-        if (sequelize) { 
+        if (sequelize) {
             await sequelize.authenticate();
             console.log('Database connection established successfully');
         }
     } catch (err) {
-        console.error('Database connection error during initial test:', err);
+        // Log only the error message for cleaner output during script runs
+        console.error('Database connection error during initial test:', err.message);
+        // Optionally log the full error for debugging: console.error(err);
     }
 };
 
