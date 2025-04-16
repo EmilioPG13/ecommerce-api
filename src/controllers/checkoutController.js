@@ -30,6 +30,8 @@ exports.checkout = async (req, res) => {
             transaction
         });
 
+        console.log("Cart items found:", JSON.stringify(cartItems, null, 2)); 
+
         if (!cartItems || cartItems.length === 0) {
             await transaction.rollback();
             return res.status(400).json({ error: 'Cart is empty' });
