@@ -27,7 +27,6 @@ exports.checkout = async (req, res) => {
             console.log(`User find result: ${user ? `Found User ID ${user.id}` : 'Not Found'}`);
             if (!user) {
                 console.log("User not found, throwing error to trigger rollback.");
-                // Throwing an error inside the callback automatically triggers rollback
                 throw new Error(`User with ID ${userId} not found.`);
             }
 
@@ -56,23 +55,22 @@ exports.checkout = async (req, res) => {
             let calculatedTotalPrice = 0;
             const orderItemsData = [];
             for (const item of cartItems) {
-                // ... (Keep existing detailed logging and validation inside loop) ...
                 console.log(`Processing item ID: ${item.id}, Product ID: ${item.product_id}`);
                 if (!item.Product || typeof item.Product.price === 'undefined' || item.Product.price === null) {
-                    console.error(`VALIDATION FAILED: Product or price missing/invalid...`);
+                    console.error(`VALIDATION FAILED: Product or price missing/invalid for cart item ID ${item.id}, product_id: ${item.product_id}. Product data:`, item.Product);
                     throw new Error(`Product details missing or invalid for an item in your cart.`);
                 }
                 const quantity = item.quantity;
                 const priceString = item.Product.price;
                 console.log(`  Item ID ${item.id}: Quantity=${quantity}, PriceString='${priceString}'`);
                 if (typeof quantity !== 'number' || quantity === null || quantity <= 0) {
-                    console.error(`VALIDATION FAILED: Invalid quantity...`);
+                    console.error(`VALIDATION FAILED: Invalid quantity for cart item ID ${item.id}. Quantity: ${quantity}`);
                     throw new Error(`Invalid quantity for an item in your cart.`);
                 }
                 const priceFloat = parseFloat(priceString);
                 console.log(`  Item ID ${item.id}: PriceFloat=${priceFloat}`);
                 if (isNaN(priceFloat)) {
-                    console.error(`VALIDATION FAILED: Price calculation resulted in NaN...`);
+                    console.error(`VALIDATION FAILED: Price calculation resulted in NaN for cart item ID ${item.id}. Original price string: '${priceString}'`);
                     throw new Error(`Invalid price format for an item in your cart.`);
                 }
                 calculatedTotalPrice += quantity * priceFloat;
@@ -89,8 +87,9 @@ exports.checkout = async (req, res) => {
             console.log("Attempting to create order...");
             const createdOrder = await Order.create({
                 user_id: userId,
-                total_price: calculatedTotalPrice,
-                status: 'Pending'
+                total_amount: calculatedTotalPrice, // <-- RENAMED FROM total_price
+                status: 'Pending' // Or use the default 'pending' from the model/DB
+                // Add other fields here if needed, e.g., payment_status: 'unpaid'
             }, { transaction: t }); // Pass transaction object 't' here
             console.log("Order created successfully:", createdOrder.id);
 
